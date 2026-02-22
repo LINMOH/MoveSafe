@@ -1,0 +1,108 @@
+{
+  "weights": {
+    "airQuality": 0.3,
+    "temperature": 0.2,
+    "humidity": 0.1,
+    "crowdDensity": 0.2,
+    "weatherCondition": 0.2
+  },
+  
+  "airQualityScores": {
+    "excellent": { "min": 0, "max": 50, "score": 100, "description": "空气质量优" },
+    "good": { "min": 51, "max": 100, "score": 80, "description": "空气质量良" },
+    "moderate": { "min": 101, "max": 150, "score": 60, "description": "轻度污染" },
+    "poor": { "min": 151, "max": 200, "score": 40, "description": "中度污染" },
+    "veryPoor": { "min": 201, "max": 300, "score": 20, "description": "重度污染" },
+    "hazardous": { "min": 301, "max": 500, "score": 0, "description": "严重污染" }
+  },
+  
+  "temperatureScores": {
+    "excellent": { "min": 15, "max": 25, "score": 100, "description": "适宜温度" },
+    "good": { "min": 10, "max": 14, "score": 80, "description": "较凉爽" },
+    "moderate": { "min": 26, "max": 30, "score": 80, "description": "较温暖" },
+    "poor": { "min": 5, "max": 9, "score": 60, "description": "较冷" },
+    "veryPoor": { "min": 31, "max": 35, "score": 60, "description": "较热" },
+    "hazardous": { "min": -10, "max": 4, "score": 30, "description": "寒冷" },
+    "extreme": { "min": 36, "max": 45, "score": 30, "description": "炎热" }
+  },
+  
+  "humidityScores": {
+    "excellent": { "min": 40, "max": 60, "score": 100, "description": "适宜湿度" },
+    "good": { "min": 30, "max": 39, "score": 80, "description": "较干燥" },
+    "moderate": { "min": 61, "max": 70, "score": 80, "description": "较潮湿" },
+    "poor": { "min": 20, "max": 29, "score": 60, "description": "干燥" },
+    "veryPoor": { "min": 71, "max": 85, "score": 60, "description": "潮湿" },
+    "hazardous": { "min": 0, "max": 19, "score": 40, "description": "非常干燥" },
+    "extreme": { "min": 86, "max": 100, "score": 40, "description": "非常潮湿" }
+  },
+  
+  "crowdDensityScores": {
+    "excellent": { "min": 0, "max": 20, "score": 100, "description": "人流稀少" },
+    "good": { "min": 21, "max": 40, "score": 80, "description": "人流较少" },
+    "moderate": { "min": 41, "max": 60, "score": 60, "description": "人流适中" },
+    "poor": { "min": 61, "max": 80, "score": 40, "description": "人流密集" },
+    "veryPoor": { "min": 81, "max": 100, "score": 20, "description": "人流非常密集" }
+  },
+  
+  "weatherConditionScores": {
+    "sunny": { "score": 100, "description": "晴天" },
+    "cloudy": { "score": 90, "description": "多云" },
+    "partlyCloudy": { "score": 85, "description": "局部多云" },
+    "lightRain": { "score": 70, "description": "小雨" },
+    "moderateRain": { "score": 50, "description": "中雨" },
+    "heavyRain": { "score": 30, "description": "大雨" },
+    "thunderstorm": { "score": 10, "description": "雷暴" },
+    "snow": { "score": 60, "description": "雪天" },
+    "fog": { "score": 40, "description": "雾天" },
+    "windy": { "score": 70, "description": "大风" }
+  },
+  
+  "locationTypes": [
+    { "value": "park", "label": "公园", "icon": "fa-tree" },
+    { "value": "stadium", "label": "操场", "icon": "fa-running" },
+    { "value": "road", "label": "马路", "icon": "fa-road" },
+    { "value": "indoor", "label": "室内", "icon": "fa-home" },
+    { "value": "gym", "label": "健身房", "icon": "fa-dumbbell" },
+    { "value": "track", "label": "田径场", "icon": "fa-flag-checkered" }
+  ],
+  
+  "timePeriods": [
+    { "value": "morning", "label": "早晨 (6:00-9:00)", "icon": "fa-sun" },
+    { "value": "lateMorning", "label": "上午 (9:00-12:00)", "icon": "fa-sun" },
+    { "value": "afternoon", "label": "下午 (12:00-18:00)", "icon": "fa-sun" },
+    { "value": "evening", "label": "傍晚 (18:00-21:00)", "icon": "fa-moon" },
+    { "value": "night", "label": "夜间 (21:00-6:00)", "icon": "fa-moon" }
+  ],
+  
+  "recommendedSports": {
+    "excellent": ["跑步", "足球", "篮球", "网球", "游泳", "健身训练"],
+    "good": ["跑步", "健身训练", "瑜伽", "武术", "羽毛球"],
+    "moderate": ["瑜伽", "健身训练", "散步", "太极"],
+    "poor": ["室内健身", "瑜伽", "拉伸运动"],
+    "notRecommended": ["不建议户外运动"]
+  },
+  
+  "riskLevels": {
+    "excellent": {
+      "level": "适合运动",
+      "color": "#10b981",
+      "description": "环境条件非常适合运动，可以放心进行各种户外活动",
+      "minScore": 80,
+      "maxScore": 100
+    },
+    "good": {
+      "level": "谨慎运动",
+      "color": "#f59e0b",
+      "description": "环境条件一般，建议选择适宜的运动类型并注意安全",
+      "minScore": 60,
+      "maxScore": 79
+    },
+    "poor": {
+      "level": "不建议运动",
+      "color": "#ef4444",
+      "description": "环境条件较差，建议避免户外运动或选择室内活动",
+      "minScore": 0,
+      "maxScore": 59
+    }
+  }
+}
