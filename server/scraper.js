@@ -14,6 +14,7 @@ const QWEATHER_HOST = process.env.QWEATHER_API_HOST || 'jj5b65qd45.re.qweatherap
 const QWEATHER_PRIVATE_KEY = process.env.QWEATHER_PRIVATE_KEY
 const QWEATHER_KEY_ID = process.env.QWEATHER_KEY_ID
 const QWEATHER_PROJECT_ID = process.env.QWEATHER_PROJECT_ID
+const QWEATHER_API_KEY = process.env.QWEATHER_API_KEY
 
 const SOURCE_URL = 'https://www.news.cn/sports/news.htm'
 const BASE_URL = 'https://www.news.cn'
@@ -39,15 +40,28 @@ async function generateJWT() {
 }
 
 async function qweatherFetch(path, params = {}) {
-  if (!QWEATHER_PRIVATE_KEY) throw new Error('未配置 QWEATHER_PRIVATE_KEY')
-  const token = await generateJWT()
   const qs = new URLSearchParams(params).toString()
   const url = `https://${QWEATHER_HOST}${path}?${qs}`
-  const res = await fetch(url, {
-    headers: {
+  let headers = {}
+
+  if (QWEATHER_API_KEY) {
+    // 使用 API Key 认证
+    params.key = QWEATHER_API_KEY
+    const qsWithKey = new URLSearchParams(params).toString()
+    const urlWithKey = `https://${QWEATHER_HOST}${path}?${qsWithKey}`
+    const res = await fetch(urlWithKey)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return res.json()
+  } else {
+    // 使用 JWT 认证
+    if (!QWEATHER_PRIVATE_KEY) throw new Error('未配置 QWEATHER_PRIVATE_KEY 或 QWEATHER_API_KEY')
+    const token = await generateJWT()
+    headers = {
       'Authorization': `Bearer ${token}`
     }
-  })
+  }
+
+  const res = await fetch(url, { headers })
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
@@ -252,7 +266,7 @@ app.get('/api/news/article', async (req, res) => {
   }
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3002
 app.listen(PORT, () => {
   console.log(`MoveSafe 新闻爬虫服务: http://localhost:${PORT}`)
 })

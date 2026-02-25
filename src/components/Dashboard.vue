@@ -9,6 +9,7 @@ const gaugeColor = computed(() =>
 
 const cards = [
   { id: 'assessment', title: '环境评估', desc: '输入温度、AQI、湿度等参数，获取运动适宜度评分与建议', icon: 'fa-chart-line' },
+  { id: 'health', title: '健康评估', desc: '基于生物指标和运动科学，提供个性化健康建议与运动计划', icon: 'fa-heartbeat' },
   { id: 'news', title: '体育新闻', desc: '浏览近期体育资讯，按类别筛选', icon: 'fa-newspaper' },
   { id: 'encyclopedia', title: '运动百科', desc: '常见运动项目介绍、规则、装备与安全提示', icon: 'fa-book' }
 ]

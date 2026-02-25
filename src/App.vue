@@ -4,12 +4,14 @@ import AssessmentModule from './components/AssessmentModule.vue'
 import SportsNews from './components/SportsNews.vue'
 import SportsEncyclopedia from './components/SportsEncyclopedia.vue'
 import Dashboard from './components/Dashboard.vue'
+import HealthAssessment from './components/HealthAssessment.vue'
 
 const activeTab = ref('dashboard')
 
 const tabs = [
   { id: 'dashboard', label: '仪表盘', icon: 'fa-tachometer-alt' },
   { id: 'assessment', label: '环境评估', icon: 'fa-chart-line' },
+  { id: 'health', label: '健康评估', icon: 'fa-heartbeat' },
   { id: 'news', label: '体育新闻', icon: 'fa-newspaper' },
   { id: 'encyclopedia', label: '运动百科', icon: 'fa-book' }
 ]
@@ -81,6 +83,9 @@ const tabs = [
           </div>
           <div v-else-if="activeTab === 'assessment'">
             <AssessmentModule />
+          </div>
+          <div v-else-if="activeTab === 'health'">
+            <HealthAssessment />
           </div>
           <div v-else-if="activeTab === 'news'">
             <SportsNews />

@@ -23,3 +23,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 自动生成的构建产物
+release/
+out/
+*.exe
+*.zip
+*.asar
+*.dmg
+*.AppImagerelease/
+*.exe
+*.zip
+*.asar

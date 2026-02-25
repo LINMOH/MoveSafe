@@ -22,13 +22,24 @@ const weatherError = ref('')
 
 
 let cityDebounceTimer = null
+
+// 获取 API 基础 URL（支持 Electron）
+function getApiBaseUrl() {
+  if (typeof window !== 'undefined' && (window.location.protocol === 'file:' || window.location.href.startsWith('file://'))) {
+    return 'http://localhost:3002'
+  }
+  return ''
+}
+
 async function searchCity() {
   const q = cityInput.value.trim()
   if (q.length < 2) { citySuggestions.value = []; return }
   clearTimeout(cityDebounceTimer)
   cityDebounceTimer = setTimeout(async () => {
     try {
-      const res = await fetch(`/api/weather/city?location=${encodeURIComponent(q)}`)
+      const baseUrl = getApiBaseUrl()
+      const url = `${baseUrl}/api/weather/city?location=${encodeURIComponent(q)}`
+      const res = await fetch(url)
       const data = await res.json()
       citySuggestions.value = data.location || []
     } catch {
@@ -51,7 +62,9 @@ async function fetchWeather() {
   weatherError.value = ''
   weatherLoading.value = true
   try {
-    const res = await fetch(`/api/weather/now?location=${encodeURIComponent(selectedLocationId.value)}`)
+    const baseUrl = getApiBaseUrl()
+    const url = `${baseUrl}/api/weather/now?location=${encodeURIComponent(selectedLocationId.value)}`
+    const res = await fetch(url)
     const data = await res.json()
     if (data.error) throw new Error(data.error)
     form.value.temperature = data.temp
