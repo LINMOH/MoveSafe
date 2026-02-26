@@ -1,8 +1,12 @@
 import { ipcMain } from 'electron';
 import * as cheerio from 'cheerio';
+import { SignJWT, importPKCS8 } from 'jose';
+import envConfig from './envConfig.js';
 
-const QWEATHER_HOST = process.env.QWEATHER_API_HOST || 'jj5b65qd45.re.qweatherapi.com';
-const QWEATHER_API_KEY = process.env.QWEATHER_API_KEY;
+const QWEATHER_HOST = envConfig.QWEATHER_API_HOST || 'jj5b65qd45.re.qweatherapi.com';
+const QWEATHER_PRIVATE_KEY = envConfig.QWEATHER_PRIVATE_KEY;
+const QWEATHER_KEY_ID = envConfig.QWEATHER_KEY_ID;
+const QWEATHER_PROJECT_ID = envConfig.QWEATHER_PROJECT_ID;
 
 const SOURCE_URL = 'https://www.news.cn/sports/news.htm';
 const BASE_URL = 'https://www.news.cn';
@@ -37,21 +41,27 @@ function mapWeatherTextToCondition(text) {
   return 'cloudy';
 }
 
+async function generateJWT() {
+  const privateKey = await importPKCS8(QWEATHER_PRIVATE_KEY, 'EdDSA');
+  const now = Math.floor(Date.now() / 1000);
+  return new SignJWT({ sub: QWEATHER_PROJECT_ID })
+    .setProtectedHeader({ alg: 'EdDSA', kid: QWEATHER_KEY_ID })
+    .setIssuedAt(now - 30)
+    .setExpirationTime(now + 900)
+    .sign(privateKey);
+}
+
 async function qweatherFetch(pathname, params = {}) {
-  const qs = new URLSearchParams(params).toString();
-  const url = `https://${QWEATHER_HOST}${pathname}?${qs}`;
-  let headers = {};
+  const url = `https://${QWEATHER_HOST}${pathname}`;
+  const queryString = new URLSearchParams(params).toString();
+  const fetchUrl = queryString ? `${url}?${queryString}` : url;
 
-  if (QWEATHER_API_KEY) {
-    params.key = QWEATHER_API_KEY;
-    const qsWithKey = new URLSearchParams(params).toString();
-    const urlWithKey = `https://${QWEATHER_HOST}${pathname}?${qsWithKey}`;
-    const res = await fetch(urlWithKey);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return res.json();
-  }
+  const token = await generateJWT();
+  const headers = {
+    'Authorization': `Bearer ${token}`
+  };
 
-  const res = await fetch(url, { headers });
+  const res = await fetch(fetchUrl, { headers });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
@@ -154,7 +164,7 @@ function setupIpcHandlers() {
       if (!location || !location.trim()) {
         throw new Error('缺少 location 参数');
       }
-      const data = await qweatherFetch('/geo/v2/city/lookup', { location, number: 10, range: 'cn' });
+      const data = await qweatherFetch('/geo/v2/city/lookup', { location, number: 10 });
       if (data.code !== '200' || !data.location?.length) {
         return { code: data.code, location: [] };
       }
@@ -176,12 +186,19 @@ function setupIpcHandlers() {
       }
       const now = data.now;
       return {
-        temp: parseInt(now.temp, 10) || 0,
-        humidity: parseInt(now.humidity, 10) || 0,
+        obsTime: now.obsTime,
+        temp: parseFloat(now.temp) || 0,
+        feelsLike: parseFloat(now.feelsLike) || 0,
+        humidity: parseFloat(now.humidity) || 0,
+        precip: parseFloat(now.precip) || 0,
+        pressure: parseFloat(now.pressure) || 0,
+        vis: parseFloat(now.vis) || 0,
+        windDir: now.windDir || '',
+        windScale: now.windScale || '0',
+        windSpeed: parseFloat(now.windSpeed) || 0,
         weatherText: now.text,
-        weatherCondition: mapWeatherTextToCondition(now.text),
-        windScale: now.windScale,
-        obsTime: now.obsTime
+        weatherIcon: now.icon,
+        weatherCondition: mapWeatherTextToCondition(now.text)
       };
     } catch (err) {
       console.error('get-weather-now error:', err.message);
@@ -200,12 +217,19 @@ function setupIpcHandlers() {
         locationId: DEFAULT_LOCATION_ID,
         cityName: '平阴',
         adm: '济南',
-        temp: parseInt(now.temp, 10) || 0,
-        humidity: parseInt(now.humidity, 10) || 0,
+        obsTime: now.obsTime,
+        temp: parseFloat(now.temp) || 0,
+        feelsLike: parseFloat(now.feelsLike) || 0,
+        humidity: parseFloat(now.humidity) || 0,
+        precip: parseFloat(now.precip) || 0,
+        pressure: parseFloat(now.pressure) || 0,
+        vis: parseFloat(now.vis) || 0,
+        windDir: now.windDir || '',
+        windScale: now.windScale || '0',
+        windSpeed: parseFloat(now.windSpeed) || 0,
         weatherText: now.text,
-        weatherCondition: mapWeatherTextToCondition(now.text),
-        windScale: now.windScale,
-        obsTime: now.obsTime
+        weatherIcon: now.icon,
+        weatherCondition: mapWeatherTextToCondition(now.text)
       };
     } catch (err) {
       console.error('get-weather-default error:', err.message);
