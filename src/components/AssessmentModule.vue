@@ -16,20 +16,12 @@ const result = ref(null)
 const cityInput = ref('')
 const citySuggestions = ref([])
 const selectedLocationId = ref('')
+const selectedCityName = ref('')
 const weatherLoading = ref(false)
 const weatherError = ref('')
-
-
+const currentWeather = ref(null)
 
 let cityDebounceTimer = null
-
-// 获取 API 基础 URL（支持 Electron）
-function getApiBaseUrl() {
-  if (typeof window !== 'undefined' && (window.location.protocol === 'file:' || window.location.href.startsWith('file://'))) {
-    return 'http://localhost:3002'
-  }
-  return ''
-}
 
 async function searchCity() {
   const q = cityInput.value.trim()
@@ -37,10 +29,7 @@ async function searchCity() {
   clearTimeout(cityDebounceTimer)
   cityDebounceTimer = setTimeout(async () => {
     try {
-      const baseUrl = getApiBaseUrl()
-      const url = `${baseUrl}/api/weather/city?location=${encodeURIComponent(q)}`
-      const res = await fetch(url)
-      const data = await res.json()
+      const data = await window.electronAPI.searchCity(q)
       citySuggestions.value = data.location || []
     } catch {
       citySuggestions.value = []
@@ -50,8 +39,10 @@ async function searchCity() {
 
 function selectCity(loc) {
   selectedLocationId.value = loc.id
-  cityInput.value = `${loc.name}${loc.adm2 ? ` (${loc.adm2})` : ''}`
+  selectedCityName.value = `${loc.name}${loc.adm2 ? ` (${loc.adm2})` : ''}`
+  cityInput.value = selectedCityName.value
   citySuggestions.value = []
+  currentWeather.value = null
 }
 
 async function fetchWeather() {
@@ -62,11 +53,8 @@ async function fetchWeather() {
   weatherError.value = ''
   weatherLoading.value = true
   try {
-    const baseUrl = getApiBaseUrl()
-    const url = `${baseUrl}/api/weather/now?location=${encodeURIComponent(selectedLocationId.value)}`
-    const res = await fetch(url)
-    const data = await res.json()
-    if (data.error) throw new Error(data.error)
+    const data = await window.electronAPI.getWeatherNow(selectedLocationId.value)
+    currentWeather.value = data
     form.value.temperature = data.temp
     form.value.humidity = data.humidity
     form.value.weatherCondition = data.weatherCondition || 'cloudy'
@@ -75,6 +63,22 @@ async function fetchWeather() {
   } finally {
     weatherLoading.value = false
   }
+}
+
+function getWeatherIcon(condition) {
+  const iconMap = {
+    sunny: 'fa-sun',
+    cloudy: 'fa-cloud',
+    partlyCloudy: 'fa-cloud-sun',
+    lightRain: 'fa-cloud-rain',
+    moderateRain: 'fa-cloud-showers-heavy',
+    heavyRain: 'fa-cloud-showers-heavy',
+    thunderstorm: 'fa-bolt',
+    snow: 'fa-snowflake',
+    fog: 'fa-smog',
+    windy: 'fa-wind'
+  }
+  return iconMap[condition] || 'fa-cloud'
 }
 
 function getScoreForRange(value, scoreMap) {
@@ -185,6 +189,32 @@ const levelDisplayColor = computed(() => {
             </button>
           </div>
           <p v-if="weatherError" class="weather-error">{{ weatherError }}</p>
+          
+          <div v-if="currentWeather" class="weather-display">
+            <div class="weather-main">
+              <i class="fas" :class="getWeatherIcon(currentWeather.weatherCondition)"></i>
+              <span class="weather-temp">{{ currentWeather.temp }}°C</span>
+              <span class="weather-desc">{{ currentWeather.weatherText }}</span>
+            </div>
+            <div class="weather-details">
+              <div class="weather-detail-item">
+                <i class="fas fa-thermometer-half"></i>
+                <span>体感 {{ currentWeather.feelsLike }}°C</span>
+              </div>
+              <div class="weather-detail-item">
+                <i class="fas fa-tint"></i>
+                <span>湿度 {{ currentWeather.humidity }}%</span>
+              </div>
+              <div class="weather-detail-item">
+                <i class="fas fa-wind"></i>
+                <span>{{ currentWeather.windDir }} {{ currentWeather.windScale }}级</span>
+              </div>
+              <div class="weather-detail-item">
+                <i class="fas fa-eye"></i>
+                <span>能见度 {{ currentWeather.vis }}km</span>
+              </div>
+            </div>
+          </div>
         </div>
         <form @submit.prevent="assess" class="assessment-form">
           <div class="form-group">
@@ -276,14 +306,22 @@ const levelDisplayColor = computed(() => {
 .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
 .weather-fetch { margin-bottom: 1rem; padding: 1rem; background: #fafafa; border: 1px solid #e5e5e5; }
 .weather-fetch label { font-size: 0.8rem; color: #666; display: block; margin-bottom: 0.5rem; }
-.city-row { display: flex; gap: 0.5rem; }
-.city-input { flex: 1; padding: 0.5rem 0.75rem; border: 1px solid #ddd; font-size: 0.95rem; }
-.btn-weather { padding: 0.5rem 1rem; background: #333; color: #fff; border: none; font-size: 0.9rem; cursor: pointer; white-space: nowrap; }
+.city-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.city-input { flex: 1 1 150px; min-width: 0; padding: 0.5rem 0.75rem; border: 1px solid #ddd; font-size: 0.95rem; }
+.btn-weather { flex-shrink: 0; padding: 0.5rem 1rem; background: #333; color: #fff; border: none; font-size: 0.9rem; cursor: pointer; white-space: nowrap; }
 .btn-weather:disabled { opacity: 0.6; cursor: not-allowed; }
 .city-suggestions { margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .city-item { padding: 0.35rem 0.6rem; background: #fff; border: 1px solid #ddd; font-size: 0.85rem; cursor: pointer; }
 .city-item:hover { border-color: #999; }
 .weather-error { margin: 0.5rem 0 0; font-size: 0.8rem; color: #c00; }
+.weather-display { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee; }
+.weather-main { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+.weather-main i { font-size: 2rem; color: #f59e0b; }
+.weather-temp { font-size: 1.75rem; font-weight: 600; color: #111; }
+.weather-desc { font-size: 1rem; color: #666; }
+.weather-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+.weather-detail-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #555; }
+.weather-detail-item i { width: 1rem; color: #888; }
 .form-group label { font-size: 0.85rem; font-weight: 500; color: #555; }
 .form-group input[type="number"], .form-group select { padding: 0.5rem 0.75rem; border: 1px solid #ddd; font-size: 1rem; }
 .form-group input[type="range"] { width: 100%; }

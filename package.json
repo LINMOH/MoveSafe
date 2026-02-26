@@ -3,17 +3,17 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "main": "electron/main.cjs",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:env": "node scripts/build-env.js",
     "preview": "vite preview",
-    "server": "bun server/scraper.js",
-    "electron:dev": "bun run build && bun x electron .",
-    "electron:pack": "bun run build && electron-builder --win --publish never",
-    "electron:packager:win": "bun run build && bun x electron-packager . MoveSafe --platform=win32 --arch=x64 --out=release --overwrite --prune=false",
-    "package:full": "bun run build && electron-builder --win --x64 --publish never",
-    "package:portable": "bun run build && electron-builder --win --x64 --publish never -c.win.target=portable"
+    "electron:dev": "bun run build:env && bun run build && bun x electron .",
+    "electron:pack": "bun run build:env && bun run build && electron-builder",
+    "electron:packager:win": "bun run build:env && bun run build && bun x electron-packager . MoveSafe --platform=win32 --arch=x64 --out=release --overwrite --prune=false",
+    "package:full": "bun run build:env && bun run build && electron-builder --win --x64 --publish never",
+    "package:portable": "bun run build:env && bun run build && electron-builder --win --x64 --publish never -c.win.target=portable"
   },
   "dependencies": {
     "cheerio": "^1.0.0",
@@ -41,7 +41,6 @@
     "files": [
       "dist/**",
       "electron/**",
-      "server/**",
       "package.json",
       "node_modules/**"
     ],

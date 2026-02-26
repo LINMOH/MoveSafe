@@ -18,24 +18,11 @@ const filteredNews = computed(() => {
   return news.value.filter(n => n.category === selectedCategory.value)
 })
 
-// 获取 API 基础 URL（支持 Electron）
-function getApiBaseUrl() {
-  if (typeof window !== 'undefined' && (window.location.protocol === 'file:' || window.location.href.startsWith('file://'))) {
-    return 'http://localhost:3002'
-  }
-  return ''
-}
-
 async function fetchNews() {
   loading.value = true
   try {
-    const baseUrl = getApiBaseUrl()
-    const url = `${baseUrl}/api/news`
-    const res = await fetch(url)
-    if (res.ok) {
-      const data = await res.json()
-      news.value = Array.isArray(data) ? data : []
-    } else throw new Error('fetch failed')
+    const data = await window.electronAPI.getNews()
+    news.value = Array.isArray(data) ? data : []
   } catch {
     news.value = sportsNewsData.map((n, i) => ({ ...n, source: '新华社（本地缓存）' }))
   } finally {
@@ -48,13 +35,8 @@ async function openDetail(item) {
   if (item.url && !item.content) {
     loadingContent.value = true
     try {
-      const baseUrl = getApiBaseUrl()
-      const url = `${baseUrl}/api/news/article?url=${encodeURIComponent(item.url)}`
-      const res = await fetch(url)
-      if (res.ok) {
-        const { content } = await res.json()
-        selectedArticle.value = { ...selectedArticle.value, content: content || '（正文加载失败，请点击下方链接查看原文）' }
-      }
+      const result = await window.electronAPI.getNewsArticle(item.url)
+      selectedArticle.value = { ...selectedArticle.value, content: result.content || '（正文加载失败，请点击下方链接查看原文）' }
     } catch {
       selectedArticle.value = { ...selectedArticle.value, content: '（正文加载失败，请点击下方链接查看原文）' }
     } finally {
