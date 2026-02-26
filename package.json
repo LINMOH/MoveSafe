@@ -29,7 +29,7 @@
     "vue-echarts": "^8.0.1"
   },
   "devDependencies": {
-    "has-flag": "^4.0.0",
+    "has-flag": "^5.0.1",
     "@vitejs/plugin-vue": "^6.0.4",
     "electron": "^40.6.1",
     "electron-builder": "^26.8.1",
