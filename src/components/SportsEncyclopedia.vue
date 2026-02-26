@@ -75,7 +75,7 @@ function closeDetail() {
 .sport-card { cursor: pointer; transition: border-color 0.2s, background 0.2s; }
 .sport-card:hover { border-color: #999; background: #fafafa; }
 .card { background: #fff; padding: 1.25rem; border: 1px solid #e5e5e5; }
-.sport-icon { font-size: 1.75rem; color: #111; margin-bottom: 0.5rem; display: block; }
+.sport-icon { font-size: 1.75rem; margin-bottom: 0.5rem; display: block; }
 .sport-card h3 { margin: 0 0 0.35rem 0; font-size: 1.05rem; font-weight: 600; }
 .sport-category { font-size: 0.75rem; color: #666; display: inline-block; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .sport-desc-preview { margin: 0 0 0.75rem 0; font-size: 0.9rem; color: #555; line-height: 1.4; }
@@ -85,10 +85,10 @@ function closeDetail() {
 .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.25rem; color: #666; cursor: pointer; padding: 0.25rem; }
 .modal-close:hover { color: #000; }
 .modal-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-right: 2rem; }
-.modal-icon { font-size: 2rem; color: #111; }
+.modal-icon { font-size: 2rem; }
 .modal-title { margin: 0 0 0.25rem 0; font-size: 1.35rem; font-weight: 600; }
 .modal-body .field-block { margin-bottom: 1.25rem; }
 .modal-body h4 { margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
-.modal-body h4 i { color: #333; width: 1.2rem; }
+.modal-body h4 i { width: 1.2rem; }
 .modal-body p { margin: 0; font-size: 0.9rem; color: #555; line-height: 1.6; }
 </style>

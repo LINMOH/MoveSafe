@@ -19,3 +19,20 @@ body {
   width: 100%;
   min-height: 100vh;
 }
+
+/* 彩色图标主题 */
+.fas.fa-tachometer-alt { color: #4a90e2; }
+.fas.fa-chart-line { color: #2ecc71; }
+.fas.fa-heartbeat { color: #e74c3c; }
+.fas.fa-newspaper { color: #f1c40f; }
+.fas.fa-book { color: #9b59b6; }
+.fas.fa-user-circle { color: #3498db; }
+.fas.fa-running { color: #ff6b6b; }
+.fas.fa-info-circle { color: #3498db; }
+.fas.fa-list-ol { color: #ff9800; }
+.fas.fa-tshirt { color: #9c27b0; }
+.fas.fa-users { color: #2e7d32; }
+.fas.fa-shield-alt { color: #2196f3; }
+.fas.fa-calendar-alt { color: #3f51b5; }
+.fas.fa-chevron-right { color: #607d8b; }
+.fas.fa-times { color: #e53935; }

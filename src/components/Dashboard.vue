@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+const emit = defineEmits(['navigate'])
 
 const demoScore = ref(72)
 
@@ -46,7 +47,16 @@ const cards = [
       <div class="cards-section">
         <h3>功能入口</h3>
         <div class="feature-cards">
-          <div v-for="c in cards" :key="c.id" class="feature-card card">
+          <div
+            v-for="c in cards"
+            :key="c.id"
+            class="feature-card card"
+            role="button"
+            tabindex="0"
+            @click="emit('navigate', c.id)"
+            @keydown.enter.prevent="emit('navigate', c.id)"
+            @keydown.space.prevent="emit('navigate', c.id)"
+          >
             <i class="fas feature-icon" :class="c.icon"></i>
             <h4>{{ c.title }}</h4>
             <p>{{ c.desc }}</p>
@@ -78,8 +88,10 @@ const cards = [
 .gauge-legend .leg-poor { background: #999; }
 .cards-section { display: flex; flex-direction: column; gap: 1rem; }
 .feature-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
-.feature-card { border-top: 2px solid #000; }
-.feature-icon { font-size: 1.25rem; margin-bottom: 0.5rem; color: #111; }
+.feature-card { border-top: 2px solid #000; cursor: pointer; transition: background 0.2s, border-color 0.2s, transform 0.05s; user-select: none; }
+.feature-card:hover { background: #f5faff; border-color: #4aa3ff; }
+.feature-card:active { transform: translateY(1px); }
+.feature-icon { font-size: 1.25rem; margin-bottom: 0.5rem; }
 .feature-card h4 { margin: 0 0 0.35rem 0; font-size: 1rem; font-weight: 600; }
 .feature-card p { margin: 0; font-size: 0.85rem; color: #666; line-height: 1.4; }
 </style>

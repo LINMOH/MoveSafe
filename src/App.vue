@@ -79,7 +79,7 @@ const tabs = [
       <div class="content-area">
         <div class="content-container">
           <div v-if="activeTab === 'dashboard'">
-            <Dashboard />
+            <Dashboard @navigate="activeTab = $event" />
           </div>
           <div v-else-if="activeTab === 'assessment'">
             <AssessmentModule />
@@ -111,10 +111,10 @@ const tabs = [
 }
 
 .app-header {
-  background: #000;
-  color: #fff;
+  background: #e6f2ff;
+  color: #0d47a1;
   padding: 1rem 2rem;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #cfe4ff;
 }
 
 .header-content {
@@ -133,8 +133,8 @@ const tabs = [
 
 .logo-icon {
   font-size: 2rem;
-  color: #fff;
-  opacity: 0.9;
+  color: #1976d2;
+  opacity: 1;
 }
 
 .logo-text h1 {
@@ -147,7 +147,7 @@ const tabs = [
 .subtitle {
   margin: 0.2rem 0 0 0;
   font-size: 0.8rem;
-  opacity: 0.7;
+  opacity: 0.9;
 }
 
 .header-info {
@@ -160,11 +160,11 @@ const tabs = [
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .info-item i {
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .app-main {
@@ -200,7 +200,7 @@ const tabs = [
 .avatar {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: inherit;
 }
 
 .user-details h3 {
@@ -239,10 +239,10 @@ const tabs = [
 }
 
 .nav-menu li.active {
-  background: #f5f5f5;
-  color: #000;
-  font-weight: 500;
-  border-left: 3px solid #000;
+  background: #eef7ff;
+  color: #0d47a1;
+  font-weight: 600;
+  border-left: 3px solid #1976d2;
 }
 
 .nav-menu li i {
@@ -266,7 +266,7 @@ const tabs = [
 
 .status-icon {
   font-size: 0.5rem;
-  color: #000;
+  color: #2ecc71;
 }
 
 .version {
